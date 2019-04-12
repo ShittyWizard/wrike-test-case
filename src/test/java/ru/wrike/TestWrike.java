@@ -1,47 +1,60 @@
 package ru.wrike;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.util.Random;
 
 
 public class TestWrike {
-    public static void main(String[] args) throws InterruptedException {
-        WebDriver webDriver = new ChromeDriver();
+    private static WebDriver webDriver = new ChromeDriver();
+
+    @BeforeClass
+    public static void startWebDriver() {
         webDriver.get("https://www.wrike.com/");
         System.out.println("Web resource opened...");
 
         webDriver.manage().window().maximize();
         System.out.println("Screen of web browser maximized...");
+    }
 
-        try {
-            webDriver.findElement(By.xpath("//div[@class='wg-header__desktop']" +
-                    "//button[@class='wg-header__free-trial-button wg-btn wg-btn--green']"))
-                    .click();
-            System.out.println("Click on 'Get started for free' button...");
+    @Test
+    public void testGetStartedCase() throws InterruptedException {
+        System.out.println("Try to click on 'Get started for free' button");
+        WebElement buttonGetStarted = webDriver.findElement(By.xpath("//div[@class='wg-header__desktop']" +
+                "//button[@class='wg-header__free-trial-button wg-btn wg-btn--green']"));
 
-            String randomEmailAddress = generateRandomEmailAddress();
-            webDriver.findElement(By.xpath("//input[@class='wg-input modal-form-trial__input']"))
-                    .sendKeys(randomEmailAddress);
-            System.out.println("Random email address for submit: " + randomEmailAddress);
+        assert buttonGetStarted.isDisplayed();
+        assert buttonGetStarted.isEnabled();
 
-            webDriver.findElement(By.xpath("//button[@class='wg-btn wg-btn--blue modal-form-trial__submit']"))
-                    .click();
-            System.out.println("Click on 'Create account'...");
-        } catch (NoSuchElementException e) {
-            e.printStackTrace();
-        } finally {
-            Thread.sleep(5000);
-            webDriver.quit();
-            System.out.println("Web browser closed...");
-        }
+        buttonGetStarted.click();
+        System.out.println("Click is successful...");
+
+        WebElement inputEmailAddress = webDriver.findElement(By.xpath("//input[@class='wg-input modal-form-trial__input']"));
+
+        assert inputEmailAddress.isEnabled();
+
+        String randomEmailAddress = generateRandomEmailAddress();
+        inputEmailAddress.sendKeys(randomEmailAddress);
+
+        WebElement buttonCreateAccount = webDriver.findElement(By.xpath("//button[@class='wg-btn wg-btn--blue modal-form-trial__submit']"));
+
+        String currentUrl = webDriver.getCurrentUrl();
+        buttonCreateAccount.click();
+        Thread.sleep(5000);
+        assert !webDriver.getCurrentUrl().equals(currentUrl);
+        Thread.sleep(5000);
+    }
+
+    @AfterClass
+    public static void quitWebDriver() {
+        webDriver.quit();
     }
 
     /**
-     *
      * @return - random email address with mask " <random text> + wpt@wriketask.qaa "
      */
     private static String generateRandomEmailAddress() {
