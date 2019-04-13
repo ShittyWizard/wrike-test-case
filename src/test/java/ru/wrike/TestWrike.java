@@ -10,25 +10,29 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class TestWrike {
     private static WebDriver webDriver = new ChromeDriver();
+    private static Logger logger = Logger.getLogger(TestWrike.class.getName());
 
     @BeforeClass
     public static void startWebDriver() {
         String url = "https://www.wrike.com/";
-        System.out.println("Web driver for url: " + url + "  starts");
         webDriver.get(url);
-        System.out.println("Web resource opened...");
+        logger.log(Level.INFO, "Web driver for url: " + url + " starts...");
 
         webDriver.manage().window().maximize();
-        System.out.println("Screen of web browser maximized...\n");
+        logger.log(Level.INFO, "Screen of web driver maximised...");
     }
 
     @Test
     public void testGetStartedCase() {
+//        TODO: change all System.out.println() to logger.log()
         assert webDriver.getTitle().equals("Your online project management software - Wrike");
+        logger.log(Level.INFO, "Test started");
         System.out.println("Try to click on 'Get started for free' button...");
         WebElement buttonGetStarted = webDriver.findElement(By.xpath("//div[@class='wg-header__desktop']" +
                 "//button[@class='wg-header__free-trial-button wg-btn wg-btn--green']"));
@@ -63,15 +67,13 @@ public class TestWrike {
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//form[@class='survey-form']")));
         assert !webDriver.getCurrentUrl().equals(currentUrl);
 
-        //TODO: Make checking form
-
-        // get the form
+        // Get the whole form
         WebElement form = webDriver.findElement(By.xpath("//form[@class='survey-form']"));
 
         assert form.isDisplayed();
         assert form.isEnabled();
 
-        // How would you describe your interest in using a solution like Wrike?
+        // Fill form for question "How would you describe your interest in using a solution like Wrike?"
         System.out.println("Try to fill first part of form (Interest in solution)");
 
         WebElement interestInSolution = getRandomElementFromList(form.findElements(By.xpath("//div[@data-code='interest_in_solution']/label")));
@@ -81,7 +83,7 @@ public class TestWrike {
         interestInSolution.click();
         System.out.println("Successful first part of form (Interest in solution) \n");
 
-        // Ideally, how many total team members will eventually be using Wrike?
+        // Fill form for question "Ideally, how many total team members will eventually be using Wrike?"
         System.out.println("Try to fill second part of form (Team members)");
 
         WebElement teamMembers = getRandomElementFromList(form.findElements(By.xpath("//div[@data-code='team_members']/label")));
@@ -91,7 +93,7 @@ public class TestWrike {
         teamMembers.click();
         System.out.println("Successful second part of from (Team members)\n");
 
-        // Does your team follow a process for managing work?
+        // Fill form for question "Does your team follow a process for managing work?"
         System.out.println("Try to fill third part of form (Primary Business)");
 
         WebElement primaryBusiness = getRandomElementFromList(form.findElements(By.xpath("div[@data-code='primary_business']/label")));
