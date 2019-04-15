@@ -110,8 +110,14 @@ public class TestWrike {
         primaryBusiness.click();
         logger.info("Successful third part of form (Primary Business) ");
 
+        logger.info("Checking that form is submitted...");
+        By buttonSubmitResultXpath = By.xpath("//button[@class='submit wg-btn wg-btn--navy js-survey-submit']");
+        assert isElementVisible(buttonSubmitResultXpath);
+
+        WebElement buttonSubmitResult = surveyForm.findElement(buttonSubmitResultXpath);
+        assert buttonSubmitResult.isEnabled();
+
         logger.info("Try to click on 'Resend email' button");
-//        By buttonResendEmailXpath = By.xpath("//div[@class='wg-grid']/div/p/button");
         By buttonResendEmailXpath = By.xpath("//button[text()='Resend email' and contains(@class,'wg-btn--hollow button')]");
         assert isElementVisible(buttonResendEmailXpath);
         WebElement buttonResendEmail = webDriver.findElement(buttonResendEmailXpath);
@@ -119,7 +125,14 @@ public class TestWrike {
         assert buttonResendEmail.isEnabled();
         buttonResendEmail.click();
 
-        logger.info("Successful click on 'Resend email' button  ");
+        // Check that 'Resend email' starts loading
+        assert isElementVisible(By.xpath("//button[text()='Resend email' and contains(@class,'wg-btn--loading')]"));
+
+        // Check that word 'again' shows into text
+        assert webDriver.findElement(By.xpath("//span[@class='again']")).getCssValue("opacity").equals("0");
+        webDriverWait.until(ExpectedConditions.attributeContains(By.xpath("//span[@class='again']"), "opacity", "1"));
+        assert webDriver.findElement(By.xpath("//span[@class='again']")).getCssValue("opacity").equals("1");
+        logger.info("Successful click on 'Resend email' button and check it");
 
         logger.info("Check Follow us section: Twitter link");
 
@@ -131,6 +144,7 @@ public class TestWrike {
         logger.info("Check correct logo for Twitter");
         assert isElementVisible(By.xpath("//*[local-name()='use' and contains(@*|href,'twitter')]"));
         logger.info("Successful check correct logo for Twitter ");
+
 //        TODO: Report by allure plugin
     }
 
