@@ -1,4 +1,11 @@
 # wrike-test-case
+
+# short comment
+It was my 1st project with using Java Selenium, and I will be glad to hear tips and mistakes. Thank you!
+
+I can't add allure plugin to my project (using this "tutorial" - https://habr.com/en/company/sberbank/blog/358836/), because I always get exception from maven-surefire-plugin.
+
+
 # Task:
 You need to implement a test which contains following steps:
 
